@@ -1,0 +1,169 @@
+#---------------------------------------------------------
+# Data Preprocessing on Titanic Dataset
+# ---------------------------------------------------------
+
+# Import required libraries
+import pandas as pd                      # For data manipulation
+import numpy as np                       # For numerical operations
+import matplotlib.pyplot as plt          # For plotting graphs
+from sklearn.model_selection import train_test_split   # To split dataset
+from sklearn.preprocessing import StandardScaler       # For feature scaling
+from sklearn.preprocessing import LabelEncoder         # For encoding categorical data
+# ---------------------------------------------------------
+# Load Dataset
+# ---------------------------------------------------------
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+
+df = pd.read_csv(url)
+
+# Display first 5 rows of dataset
+print("First Five Records")
+print(df.head())
+
+# ---------------------------------------------------------
+# Basic Information
+# ---------------------------------------------------------
+
+# Display dataset information
+print("\nDataset Information")
+print(df.info())
+
+# Display statistical summary
+print("\nStatistical Summary")
+print(df.describe())
+
+# ---------------------------------------------------------
+# Data Cleaning
+# ---------------------------------------------------------
+
+# Check duplicate records
+print("\nDuplicate Records:", df.duplicated().sum())
+
+# Remove duplicate records if present
+df.drop_duplicates(inplace=True)
+print("\nMissing Values")
+print(df.isnull().sum())
+
+# Fill missing Age values using mean
+df["Age"] = df["Age"].fillna(df["Age"].mean())
+
+# Fill missing Embarked values using mode
+df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
+
+# Fill missing Fare values using mean
+df["Fare"] = df["Fare"].fillna(df["Fare"].mean())
+
+# Drop Cabin because it contains many missing values
+if "Cabin" in df.columns:
+    df.drop("Cabin", axis=1, inplace=True)
+    
+encoder = LabelEncoder()
+
+# Convert Sex into numerical values
+df["Sex"] = encoder.fit_transform(df["Sex"])
+
+# Convert Embarked into numerical values
+df["Embarked"] = encoder.fit_transform(df["Embarked"])
+# ---------------------------------------------------------
+# Feature Scaling
+# ---------------------------------------------------------
+
+scaler = StandardScaler()
+
+df[["Age", "Fare"]] = scaler.fit_transform(
+    df[["Age", "Fare"]]
+)
+
+# ---------------------------------------------------------
+# Statistical Analysis
+# ---------------------------------------------------------
+
+print("\nMean of Numerical Columns")
+print(df.mean(numeric_only=True))
+
+print("\nMedian of Numerical Columns")
+print(df.median(numeric_only=True))
+
+print("\nStandard Deviation")
+print(df.std(numeric_only=True))
+
+print("\nCorrelation Matrix")
+print(df.corr(numeric_only=True))
+
+# ---------------------------------------------------------
+# Data Visualization
+# ---------------------------------------------------------
+
+# Histogram of Age
+plt.figure(figsize=(5, 4))
+plt.hist(df["Age"], bins=20)
+plt.title("Histogram of Age")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+
+# Histogram of Fare
+plt.figure(figsize=(5, 4))
+plt.hist(df["Fare"], bins=20)
+plt.title("Histogram of Fare")
+plt.xlabel("Fare")
+plt.ylabel("Frequency")
+plt.show()
+
+
+# Boxplot of Age
+plt.figure(figsize=(5, 4))
+plt.boxplot(df["Age"])
+plt.title("Boxplot of Age")
+plt.ylabel("Age")
+plt.show()
+
+
+# Boxplot of Fare
+plt.figure(figsize=(5, 4))
+plt.boxplot(df["Fare"])
+plt.title("Boxplot of Fare")
+plt.ylabel("Fare")
+plt.show()
+# ---------------------------------------------------------
+# Split Dataset into Features and Target
+# ---------------------------------------------------------
+
+# Features
+X = df.drop("Survived", axis=1)
+
+# Target
+y = df["Survived"]
+# ---------------------------------------------------------
+# Remove Non-Numeric Columns
+# ---------------------------------------------------------
+
+columns_to_remove = ["Name", "Ticket", "PassengerId"]
+
+for column in columns_to_remove:
+    if column in X.columns:
+        X = X.drop(column, axis=1)
+
+# ---------------------------------------------------------
+# Split Dataset
+# ---------------------------------------------------------
+
+# 80% Training and 20% Testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+# ---------------------------------------------------------
+# Display Dataset Sizes
+# ---------------------------------------------------------
+
+print("\nTraining Feature Shape :", X_train.shape)
+print("Testing Feature Shape  :", X_test.shape)
+
+print("Training Target Shape  :", y_train.shape)
+print("Testing Target Shape   :", y_test.shape)
+
+print("\nData Preprocessing Completed Successfully!")
