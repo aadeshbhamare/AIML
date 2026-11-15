@@ -1,0 +1,59 @@
+
+# Rule-Based Expert System using Backward Chaining
+
+# Rules
+rules = {
+    "flu": ["fever", "cough"],
+    "rest": ["flu"],
+    "viral": ["fever", "body_pain"],
+    "medicine": ["viral"]
+}
+
+# Backward Chaining
+def backward(goal, facts):
+
+    if goal in facts:
+        return True
+
+    if goal in rules:
+        for condition in rules[goal]:
+
+            if not backward(condition, facts):
+                return False
+
+        return True
+
+    return False
+
+
+# Main Program
+while True:
+
+    print("\n==============================")
+    print("       EXPERT SYSTEM")
+    print("==============================")
+
+    print("\nRules:")
+    print("fever + cough -> flu")
+    print("flu -> rest")
+    print("fever + body_pain -> viral")
+    print("viral -> medicine")
+
+    facts = input(
+        "\nEnter facts separated by space: "
+    ).lower().split()
+
+    goal = input("\nEnter goal: ").lower()
+
+    if backward(goal, facts):
+        print("\nGoal", goal, "is TRUE")
+    else:
+        print("\nGoal", goal, "is FALSE")
+
+    again = input(
+        "\nDo you want to continue? (yes/no): "
+    ).lower()
+
+    if again != "yes":
+        print("Program ended.")
+        break
