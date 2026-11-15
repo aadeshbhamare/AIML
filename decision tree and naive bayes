@@ -1,0 +1,246 @@
+# =========================================================
+# PR: Classification using Decision Tree and Naïve Bayes
+# Dataset: Iris
+# =========================================================
+
+# Import pandas library for data manipulation
+import pandas as pd
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Import classification models
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+
+# Import evaluation metrics
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix,
+    classification_report
+)
+# =========================================================
+# Step 1: Load Dataset
+# =========================================================
+
+file_path = r"C:\Users\DELL\Downloads\8836201-6f9306ad21398ea43cba4f7d537619d0e07d5ae3\8836201-6f9306ad21398ea43cba4f7d537619d0e07d5ae3\iris.csv"
+df = pd.read_csv(file_path)
+print("First Five Records:")
+print(df.head())
+print("\nDataset Information:")
+df.info()
+print("\nColumn Names:")
+print(df.columns)
+# =========================================================
+# Step 2: Separate Features and Target
+# =========================================================
+# Remove unnecessary ID column if present
+if "Id" in df.columns:
+    df = df.drop("Id", axis=1)
+# Detect target column
+if "Species" in df.columns:
+    target_column = "Species"
+elif "species" in df.columns:
+    target_column = "species"
+else:
+    # Assume last column is target
+    target_column = df.columns[-1]
+print("\nTarget Column:", target_column)
+
+# Features
+X = df.drop(target_column, axis=1)
+
+# Target
+y = df[target_column]
+
+print("\nFeatures:")
+print(X.head())
+
+print("\nTarget:")
+print(y.head())
+
+# =========================================================
+# Step 3: Split Dataset
+# =========================================================
+
+# 80% Training and 20% Testing
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+print("\nTraining Data Size:", X_train.shape)
+print("Testing Data Size :", X_test.shape)
+
+
+# =========================================================
+# Step 4: Decision Tree Classifier
+# =========================================================
+
+print("\n==========================================")
+print("       Decision Tree Classifier")
+print("==========================================")
+
+# Create Decision Tree model
+dt_model = DecisionTreeClassifier(
+    random_state=42
+)
+
+# Train the model
+dt_model.fit(X_train, y_train)
+
+# Predict test data
+dt_prediction = dt_model.predict(X_test)
+
+
+# =========================================================
+# Decision Tree Evaluation
+# =========================================================
+
+dt_accuracy = accuracy_score(
+    y_test,
+    dt_prediction
+)
+
+dt_precision = precision_score(
+    y_test,
+    dt_prediction,
+    average="weighted"
+)
+
+dt_recall = recall_score(
+    y_test,
+    dt_prediction,
+    average="weighted"
+)
+
+dt_f1 = f1_score(
+    y_test,
+    dt_prediction,
+    average="weighted"
+)
+
+print("\nDecision Tree Performance:")
+print("Accuracy :", dt_accuracy)
+print("Precision:", dt_precision)
+print("Recall   :", dt_recall)
+print("F1-Score :", dt_f1)
+
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(
+    y_test,
+    dt_prediction
+))
+
+
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    dt_prediction
+))
+
+# =========================================================
+# Step 5: Naïve Bayes Classifier
+# =========================================================
+
+print("\n==========================================")
+print("       Naïve Bayes Classifier")
+print("==========================================")
+
+# Create Gaussian Naïve Bayes model
+nb_model = GaussianNB()
+
+# Train the model
+nb_model.fit(X_train, y_train)
+
+# Predict test data
+nb_prediction = nb_model.predict(X_test)
+
+
+# =========================================================
+# Naïve Bayes Evaluation
+# =========================================================
+
+nb_accuracy = accuracy_score(
+    y_test,
+    nb_prediction
+)
+
+nb_precision = precision_score(
+    y_test,
+    nb_prediction,
+    average="weighted"
+)
+
+nb_recall = recall_score(
+    y_test,
+    nb_prediction,
+    average="weighted"
+)
+
+nb_f1 = f1_score(
+    y_test,
+    nb_prediction,
+    average="weighted"
+)
+
+print("\nNaïve Bayes Performance:")
+print("Accuracy :", nb_accuracy)
+print("Precision:", nb_precision)
+print("Recall   :", nb_recall)
+print("F1-Score :", nb_f1)
+
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(
+    y_test,
+    nb_prediction
+))
+
+
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    nb_prediction
+))
+
+# =========================================================
+# Step 6: Compare Both Models
+# =========================================================
+
+print("\n==========================================")
+print("           MODEL COMPARISON")
+print("==========================================")
+
+print("\n                 Accuracy   Precision   Recall   F1-Score")
+print("Decision Tree   :", round(dt_accuracy, 4),
+      round(dt_precision, 4),
+      round(dt_recall, 4),
+      round(dt_f1, 4))
+
+print("Naïve Bayes     :", round(nb_accuracy, 4),
+      round(nb_precision, 4),
+      round(nb_recall, 4),
+      round(nb_f1, 4))
+
+# =========================================================
+# Final Comparison
+# =========================================================
+
+if dt_accuracy > nb_accuracy:
+
+    print("\nDecision Tree has higher accuracy on this test split.")
+
+elif nb_accuracy > dt_accuracy:
+
+    print("\nNaïve Bayes has higher accuracy on this test split.")
+
+else:
+    print("\nBoth models have equal accuracy on this test split.")
