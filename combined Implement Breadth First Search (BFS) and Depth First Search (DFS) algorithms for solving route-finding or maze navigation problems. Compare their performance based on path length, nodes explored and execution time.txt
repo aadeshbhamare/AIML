@@ -1,1 +1,136 @@
 
+from collections import deque
+import time
+
+# Graph representation
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': ['G'],
+    'E': ['G'],
+    'F': ['G'],
+    'G': []
+}
+
+# BFS Algorithm
+def bfs(graph, start, goal):
+    queue = deque([(start, [start])])
+    visited = set()
+    nodes_explored = 0
+
+    while queue:
+        node, path = queue.popleft()
+
+        if node in visited:
+            continue
+
+        visited.add(node)
+        nodes_explored += 1
+
+        if node == goal:
+            return path, nodes_explored
+
+        for neighbour in graph[node]:
+            if neighbour not in visited:
+                queue.append((neighbour, path + [neighbour]))
+
+    return None, nodes_explored
+
+
+# DFS Algorithm
+def dfs(graph, start, goal):
+    stack = [(start, [start])]
+    visited = set()
+    nodes_explored = 0
+
+    while stack:
+        node, path = stack.pop()
+
+        if node in visited:
+            continue
+
+        visited.add(node)
+        nodes_explored += 1
+
+        if node == goal:
+            return path, nodes_explored
+
+        for neighbour in reversed(graph[node]):
+            if neighbour not in visited:
+                stack.append((neighbour, path + [neighbour]))
+
+    return None, nodes_explored
+
+
+# Display BFS Result
+def display_bfs(start, goal):
+    t1 = time.perf_counter()
+    path, nodes = bfs(graph, start, goal)
+    execution_time = time.perf_counter() - t1
+
+    print("\n========== BFS RESULT ==========")
+    print("Path:", " -> ".join(path) if path else "No path found")
+    print("Path Length:", len(path) - 1 if path else "Not available")
+    print("Nodes Explored:", nodes)
+    print("Execution Time:", format(execution_time, ".8f"), "seconds")
+
+
+# Display DFS Result
+def display_dfs(start, goal):
+    t1 = time.perf_counter()
+    path, nodes = dfs(graph, start, goal)
+    execution_time = time.perf_counter() - t1
+
+    print("\n========== DFS RESULT ==========")
+    print("Path:", " -> ".join(path) if path else "No path found")
+    print("Path Length:", len(path) - 1 if path else "Not available")
+    print("Nodes Explored:", nodes)
+    print("Execution Time:", format(execution_time, ".8f"), "seconds")
+
+
+# Main Program
+while True:
+
+    print("\n========== BFS AND DFS ==========")
+    print("1. BFS")
+    print("2. DFS")
+    print("3. Both BFS and DFS")
+
+    choice = input("Enter your choice: ")
+
+    start = input("Enter starting node: ").upper()
+    goal = input("Enter goal node: ").upper()
+
+    if start not in graph or goal not in graph:
+        print("Invalid node!")
+
+    elif choice == "1":
+        display_bfs(start, goal)
+
+    elif choice == "2":
+        display_dfs(start, goal)
+
+    elif choice == "3":
+        display_bfs(start, goal)
+        display_dfs(start, goal)
+
+        print("\n========== PERFORMANCE COMPARISON ==========")
+
+        bfs_path, bfs_nodes = bfs(graph, start, goal)
+        dfs_path, dfs_nodes = dfs(graph, start, goal)
+
+        print("BFS Path Length:", len(bfs_path) - 1 if bfs_path else "Not available")
+        print("DFS Path Length:", len(dfs_path) - 1 if dfs_path else "Not available")
+        print("BFS Nodes Explored:", bfs_nodes)
+        print("DFS Nodes Explored:", dfs_nodes)
+
+    else:
+        print("Invalid choice!")
+
+    again = input("\nDo you want to continue? (yes/no): ").lower()
+
+    if again != "yes":
+        print("Program ended.")
+        break
+
