@@ -1,0 +1,135 @@
+
+# Rule-Based Expert System using Propositional Logic
+
+# Rules
+rules = {
+    "flu": ["fever", "cough"],
+    "rest": ["flu"],
+    "viral": ["fever", "body_pain"],
+    "medicine": ["viral"]
+}
+
+
+# Forward Chaining
+def forward(facts):
+
+    print("\nForward Chaining:")
+    changed = True
+
+    while changed:
+        changed = False
+
+        for result in rules:
+            conditions = rules[result]
+
+            if all(x in facts for x in conditions):
+                if result not in facts:
+                    facts.append(result)
+                    print("Rule applied:", conditions, "->", result)
+                    changed = True
+
+    return facts
+
+
+# Backward Chaining
+def backward(goal, facts):
+
+    if goal in facts:
+        return True
+
+    if goal in rules:
+        for condition in rules[goal]:
+            if not backward(condition, facts):
+                return False
+
+        return True
+
+    return False
+
+
+# Comparison
+def comparison():
+
+    print("\n==============================")
+    print(" FORWARD vs BACKWARD CHAINING")
+    print("==============================")
+
+    print("\nForward Chaining:")
+    print("Facts -> Conclusion")
+    print("Data-driven approach")
+    print("Starts with known facts")
+    print("Finds possible conclusions")
+
+    print("\nBackward Chaining:")
+    print("Goal -> Required Facts")
+    print("Goal-driven approach")
+    print("Starts with a goal")
+    print("Checks whether the goal is true")
+
+    print("\nExample:")
+    print("Forward : fever + cough -> flu -> rest")
+    print("Backward: rest -> flu -> fever + cough")
+
+
+# Main Program
+while True:
+
+    print("\n==============================")
+    print("       EXPERT SYSTEM")
+    print("==============================")
+
+    print("\nRules:")
+    print("fever + cough -> flu")
+    print("flu -> rest")
+    print("fever + body_pain -> viral")
+    print("viral -> medicine")
+
+    facts = input(
+        "\nEnter facts separated by space: "
+    ).lower().split()
+
+    print("\n1. Forward Chaining")
+    print("2. Backward Chaining")
+    print("3. Comparison")
+    print("4. Exit")
+
+    choice = input("Enter your choice: ")
+
+    # Forward Chaining
+    if choice == "1":
+
+        result = forward(facts)
+        print("\nFinal Facts:", result)
+
+    # Backward Chaining
+    elif choice == "2":
+
+        goal = input("Enter goal: ").lower()
+
+        if backward(goal, facts):
+            print("\nGoal", goal, "is TRUE")
+        else:
+            print("\nGoal", goal, "is FALSE")
+
+    # Comparison
+    elif choice == "3":
+
+        comparison()
+
+    # Exit
+    elif choice == "4":
+
+        print("Program ended.")
+        break
+
+    else:
+        print("Invalid choice!")
+
+    # Continue or Exit
+    again = input(
+        "\nDo you want to continue? (yes/no): "
+    ).lower()
+
+    if again != "yes":
+        print("Program ended.")
+        break
