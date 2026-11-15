@@ -1,0 +1,61 @@
+
+# Rule-Based Expert System using Forward Chaining
+
+# Rules
+rules = {
+    "flu": ["fever", "cough"],
+    "rest": ["flu"],
+    "viral": ["fever", "body_pain"],
+    "medicine": ["viral"]
+}
+
+# Forward Chaining
+def forward(facts):
+
+    print("\nForward Chaining:")
+
+    changed = True
+
+    while changed:
+        changed = False
+
+        for result in rules:
+            conditions = rules[result]
+
+            if all(x in facts for x in conditions):
+                if result not in facts:
+                    facts.append(result)
+                    print("Rule applied:", conditions, "->", result)
+                    changed = True
+
+    return facts
+
+
+# Main Program
+while True:
+
+    print("\n==============================")
+    print("       EXPERT SYSTEM")
+    print("==============================")
+
+    print("\nRules:")
+    print("fever + cough -> flu")
+    print("flu -> rest")
+    print("fever + body_pain -> viral")
+    print("viral -> medicine")
+
+    facts = input(
+        "\nEnter facts separated by space: "
+    ).lower().split()
+
+    result = forward(facts)
+
+    print("\nFinal Facts:", result)
+
+    again = input(
+        "\nDo you want to continue? (yes/no): "
+    ).lower()
+
+    if again != "yes":
+        print("Program ended.")
+        break
