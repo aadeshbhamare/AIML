@@ -1,0 +1,138 @@
+
+# ---------------------------------------------------------
+# AI & ML LABORATORY PRACTICAL
+# PR1: Intelligent Agents and PEAS Representation
+# Title: Design and Implement a Simple Intelligent Agent
+# Application: Movie Recommendation Assistant using PEAS
+# ---------------------------------------------------------
+
+# Create a class named RecommendationAgent
+class RecommendationAgent:
+
+    # Constructor method
+    # It is automatically executed when the object is created
+    def __init__(self):
+
+        # Display the title of the practical
+        print("\n========== MOVIE RECOMMENDATION AGENT ==========\n")
+
+        # Display PEAS Representation
+        print("PEAS Representation")
+        print("------------------------------")
+
+        # Display Performance Measure
+        print("Performance Measure : Relevant recommendations, user satisfaction and accuracy.")
+
+        # Display Environment
+        print("Environment         : User, movie database and recommendation system.")
+
+        # Display Actuators
+        print("Actuators           : Displaying recommended movie names.")
+
+        # Display Sensors
+        print("Sensors             : User preferences and genre input.")
+
+        # Display separator
+        print("------------------------------\n")
+
+    # Function to process user preferences and recommend movies
+    def recommend(self, genre):
+
+        # Display that the agent is processing user preferences
+        print("\nProcessing user preferences...")
+
+        # Convert genre into lowercase
+        genre = genre.lower()
+
+        # ---------------- RECOMMENDATION DECISION ----------------
+
+        # Check whether the user prefers action movies
+        if genre == "action":
+            movies = ["Avengers: Endgame", "Mission Impossible", "John Wick"]
+
+        # Check whether the user prefers comedy movies
+        elif genre == "comedy":
+            movies = ["Home Alone", "The Mask", "Jumanji"]
+
+        # Check whether the user prefers science fiction movies
+        elif genre == "sci-fi":
+            movies = ["Interstellar", "The Martian", "Inception"]
+
+        # Check whether the user prefers romantic movies
+        elif genre == "romance":
+            movies = ["Titanic", "The Notebook", "La La Land"]
+
+        # Check whether the user prefers horror movies
+        elif genre == "horror":
+            movies = ["The Conjuring", "Annabelle", "A Quiet Place"]
+
+        # Default response for unsupported genres
+        else:
+            movies = []
+
+        # Return the recommended movies
+        return movies
+
+
+# ---------------------------------------------------------
+# MAIN PROGRAM STARTS HERE
+# ---------------------------------------------------------
+
+# Create an object of RecommendationAgent class
+agent = RecommendationAgent()
+
+# Display the working steps of the intelligent agent
+print("Agent Behaviour")
+print("------------------------------")
+print("1. Sense  -> Collect user movie preferences")
+print("2. Think  -> Identify the preferred genre")
+print("3. Act    -> Recommend suitable movies")
+print("4. Repeat -> Continue recommending movies")
+print("------------------------------")
+
+# Start an infinite loop
+while True:
+
+    # ---------------- SENSOR ----------------
+
+    # Read preferred movie genre from the user
+    genre = input(
+        "\nEnter your preferred genre (action/comedy/sci-fi/romance/horror): "
+    ).lower()
+
+    # Check whether the user wants to exit
+    if genre == "exit":
+
+        # Display successful completion message
+        print("\nRecommendation Agent executed successfully!")
+
+        # Display thank-you message
+        print("Thank you!")
+
+        # Exit the loop
+        break
+
+    # ---------------- THINK ----------------
+
+    # Pass user preference to the intelligent agent
+    recommendations = agent.recommend(genre)
+
+    # ---------------- ACTUATOR ----------------
+
+    # Display the recommended movies
+    print("\n========== RECOMMENDED MOVIES ==========")
+
+    # Check whether recommendations are available
+    if recommendations:
+
+        # Display each recommended movie
+        for movie in recommendations:
+            print("- " + movie)
+
+    else:
+
+        # Display message for unsupported genre
+        print("Sorry, no recommendations available for this genre.")
+
+    # Display separator
+    print("========================================")
