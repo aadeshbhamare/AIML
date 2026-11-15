@@ -1,0 +1,226 @@
+# ===============================================================
+# Practical: K-Means and Hierarchical Clustering
+# Dataset: Online Retail.xlsx
+# ===============================================================
+# -----------------------------
+# Step 1: Import Required Libraries
+# -----------------------------
+import pandas as pd
+import matplotlib.pyplot as plt
+# Import K-Means algorithm
+from sklearn.cluster import KMeans
+# Import Hierarchical Clustering algorithm
+from sklearn.cluster import AgglomerativeClustering
+# Import Dendrogram functions
+import scipy.cluster.hierarchy as sch
+# -------------------------------------------------
+# Step 2: Load Dataset
+# -------------------------------------------------
+file_path = r"C:\Users\DELL\Downloads\archive\Online Retail.xlsx"
+# Read Excel file
+df = pd.read_excel(file_path)
+print("Dataset loaded successfully!")
+print(df.head())
+# -------------------------------------------------
+# Step 3: Data Cleaning
+# -------------------------------------------------
+# Remove rows where CustomerID is missing
+df = df.dropna(subset=['CustomerID'])
+# Remove cancelled invoices
+df = df[~df['InvoiceNo'].astype(str).str.startswith('C')]
+# Remove invalid quantity and price values
+df = df[df['Quantity'] > 0]
+df = df[df['UnitPrice'] > 0]
+# -------------------------------------------------
+# Step 4: Create Customer Features
+# -------------------------------------------------
+# Calculate total amount for each transaction
+df['TotalAmount'] = df['Quantity'] * df['UnitPrice']
+# Group data customer-wise
+customer_data = df.groupby('CustomerID').agg({
+    'TotalAmount': 'sum',
+    'InvoiceNo': 'nunique'
+}).reset_index()
+# Rename columns
+customer_data.columns = [
+    'CustomerID',
+    'TotalSpending',
+    'NumberOfPurchases'
+]
+print("\nCustomer Data:")
+print(customer_data.head())
+# -------------------------------------------------
+# Step 5: Select Features
+# -------------------------------------------------
+# Selecting Total Spending and Number of Purchases
+X = customer_data.iloc[:, [1, 2]].values
+# -------------------------------------------------
+# Step 6: Find Optimal Clusters using Elbow Method
+# -------------------------------------------------
+# Empty list to store WCSS values
+wcss = []
+# Try cluster values from 1 to 10
+for i in range(1, 11):
+    # Create KMeans model
+    kmeans = KMeans(
+        n_clusters=i,
+        init='k-means++',
+        random_state=42,
+        n_init=10
+    )
+    # Train model
+    kmeans.fit(X)
+    # Store WCSS value
+    wcss.append(kmeans.inertia_)
+# Plot Elbow Graph
+plt.figure(figsize=(5, 4))
+plt.plot(
+    range(1, 11),
+    wcss,
+    marker='o'
+)
+plt.title("Elbow Method")
+plt.xlabel("Number of Clusters")
+plt.ylabel("WCSS")
+plt.show()
+# -------------------------------------------------
+# Step 7: Apply K-Means Clustering
+# -------------------------------------------------
+# Choose 5 clusters
+kmeans = KMeans(
+    n_clusters=5,
+    init='k-means++',
+    random_state=42,
+    n_init=10
+)
+# Predict cluster labels
+y_kmeans = kmeans.fit_predict(X)
+# -------------------------------------------------
+# Step 8: Visualize K-Means Clusters
+# -------------------------------------------------
+plt.figure(figsize=(5, 4))
+# Cluster 1
+plt.scatter(
+    X[y_kmeans == 0, 0],
+    X[y_kmeans == 0, 1],
+    label="Cluster 1"
+)
+# Cluster 2
+plt.scatter(
+    X[y_kmeans == 1, 0],
+    X[y_kmeans == 1, 1],
+    label="Cluster 2"
+)
+# Cluster 3
+plt.scatter(
+    X[y_kmeans == 2, 0],
+    X[y_kmeans == 2, 1],
+    label="Cluster 3"
+)
+# Cluster 4
+plt.scatter(
+    X[y_kmeans == 3, 0],
+    X[y_kmeans == 3, 1],
+    label="Cluster 4"
+)
+# Cluster 5
+plt.scatter(
+    X[y_kmeans == 4, 0],
+    X[y_kmeans == 4, 1],
+    label="Cluster 5"
+)
+# Plot Centroids
+plt.scatter(
+    kmeans.cluster_centers_[:, 0],
+    kmeans.cluster_centers_[:, 1],
+    s=200,
+    marker='X',
+    label="Centroids"
+)
+plt.title("K-Means Clustering")
+plt.xlabel("Total Spending")
+plt.ylabel("Number of Purchases")
+plt.legend()
+plt.show()
+# -------------------------------------------------
+# Step 9: Plot Dendrogram
+# -------------------------------------------------
+plt.figure(figsize=(7, 5))
+sch.dendrogram(
+    sch.linkage(
+        X,
+        method='ward'
+    )
+)
+plt.title("Dendrogram")
+plt.xlabel("Customers")
+plt.ylabel("Euclidean Distance")
+plt.show()
+
+# -------------------------------------------------
+# Step 10: Apply Hierarchical Clustering
+# -------------------------------------------------
+hc = AgglomerativeClustering(
+    n_clusters=5,
+    metric='euclidean',
+    linkage='ward'
+)
+# Predict clusters
+y_hc = hc.fit_predict(X)
+# -------------------------------------------------
+# Step 11: Visualize Hierarchical Clustering
+# -------------------------------------------------
+plt.figure(figsize=(5, 4))
+# Cluster 1
+plt.scatter(
+    X[y_hc == 0, 0],
+    X[y_hc == 0, 1],
+    label="Cluster 1"
+)
+# Cluster 2
+plt.scatter(
+    X[y_hc == 1, 0],
+    X[y_hc == 1, 1],
+    label="Cluster 2"
+)
+# Cluster 3
+plt.scatter(
+    X[y_hc == 2, 0],
+    X[y_hc == 2, 1],
+    label="Cluster 3"
+)
+# Cluster 4
+plt.scatter(
+    X[y_hc == 3, 0],
+    X[y_hc == 3, 1],
+    label="Cluster 4"
+)
+# Cluster 5
+plt.scatter(
+    X[y_hc == 4, 0],
+    X[y_hc == 4, 1],
+    label="Cluster 5"
+)
+plt.title("Hierarchical Clustering")
+plt.xlabel("Total Spending")
+plt.ylabel("Number of Purchases")
+plt.legend()
+plt.show()
+# -------------------------------------------------
+# Step 12: Display Cluster Labels
+# -------------------------------------------------
+print("\nK-Means Cluster Labels:")
+print(y_kmeans)
+print("\nHierarchical Cluster Labels:")
+print(y_hc)
+
+# -------------------------------------------------
+# Step 13: Add Cluster Labels to Customer Data
+# -------------------------------------------------
+customer_data['KMeans_Cluster'] = y_kmeans
+customer_data['Hierarchical_Cluster'] = y_hc
+print("\nFinal Customer Segmentation:")
+print(customer_data.head(20))
+# -------------------------------------------------
+# End of Program
+# -------------------------------------------------
