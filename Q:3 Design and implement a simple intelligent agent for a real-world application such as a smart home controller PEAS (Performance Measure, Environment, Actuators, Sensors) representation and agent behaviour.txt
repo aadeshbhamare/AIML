@@ -1,0 +1,167 @@
+
+# ---------------------------------------------------------
+# AI & ML LABORATORY PRACTICAL
+# PR1: Intelligent Agents and PEAS Representation
+# Title: Design and Implement a Simple Intelligent Agent
+# Application: Smart Home Controller using PEAS
+# ---------------------------------------------------------
+
+# Create a class named SmartHomeAgent
+class SmartHomeAgent:
+
+    # Constructor method
+    # It is automatically executed when the object is created
+    def __init__(self):
+
+        # Display the title of the practical
+        print("\n========== SMART HOME INTELLIGENT AGENT ==========\n")
+
+        # Display PEAS Representation
+        print("PEAS Representation")
+        print("------------------------------")
+
+        # Display Performance Measure
+        print("Performance Measure : Comfort, safety, energy saving and fast response.")
+
+        # Display Environment
+        print("Environment         : Smart home including rooms and main door.")
+
+        # Display Actuators
+        print("Actuators           : Light, Fan, AC and Door Lock.")
+
+        # Display Sensors
+        print("Sensors             : Temperature, Motion, Light and Door sensors.")
+
+        # Display separator
+        print("------------------------------\n")
+
+    # Function to process sensor values and generate actions
+    def respond(self, temperature, motion, light, door):
+
+        # Display that the agent is processing sensor data
+        print("\nProcessing sensor information...")
+
+        # ---------------- LIGHT DECISION ----------------
+
+        # Check whether motion is detected and room is dark
+        if motion == "yes" and light == "dark":
+            # Turn ON the light
+            light_action = "Light: ON"
+        else:
+            # Turn OFF the light
+            light_action = "Light: OFF"
+
+        # ---------------- FAN DECISION ----------------
+
+        # Check whether temperature is 25 degree Celsius or more
+        if temperature >= 25:
+            # Turn ON the fan
+            fan_action = "Fan: ON"
+        else:
+            # Turn OFF the fan
+            fan_action = "Fan: OFF"
+
+        # ---------------- AC DECISION ----------------
+
+        # Check whether temperature is 30 degree Celsius or more
+        if temperature >= 30:
+            # Turn ON the AC
+            ac_action = "AC: ON"
+        else:
+            # Turn OFF the AC
+            ac_action = "AC: OFF"
+
+        # ---------------- DOOR DECISION ----------------
+
+        # Check whether the main door is closed
+        if door == "closed":
+            # Lock the door
+            door_action = "Door Lock: LOCKED"
+        else:
+            # Keep the door unlocked
+            door_action = "Door Lock: UNLOCKED"
+
+        # Return all actions performed by the agent
+        return light_action, fan_action, ac_action, door_action
+
+
+# ---------------------------------------------------------
+# MAIN PROGRAM STARTS HERE
+# ---------------------------------------------------------
+
+# Create an object of SmartHomeAgent class
+agent = SmartHomeAgent()
+
+# Display the working steps of the intelligent agent
+print("Agent Behaviour")
+print("------------------------------")
+print("1. Sense  -> Read sensor information")
+print("2. Think  -> Process sensor values")
+print("3. Act    -> Control home appliances")
+print("4. Repeat -> Continue monitoring")
+print("------------------------------")
+
+
+# Start an infinite loop
+while True:
+
+    # ---------------- SENSOR ----------------
+
+    # Read temperature from the user
+    temperature = float(input("\nEnter room temperature (°C): "))
+
+    # Read motion sensor information
+    motion = input("Is motion detected? (yes/no): ").lower()
+
+    # Read light sensor information
+    light = input("Is the room light condition bright/dark? ").lower()
+
+    # Read door sensor information
+    door = input("Is the main door open/closed? ").lower()
+
+    # ---------------- THINK ----------------
+
+    # Pass sensor values to the intelligent agent
+    actions = agent.respond(
+        temperature,
+        motion,
+        light,
+        door
+    )
+
+    # ---------------- ACTUATOR ----------------
+
+    # Display the decisions taken by the agent
+    print("\n========== AGENT ACTIONS ==========")
+
+    # Display light status
+    print(actions[0])
+
+    # Display fan status
+    print(actions[1])
+
+    # Display AC status
+    print(actions[2])
+
+    # Display door lock status
+    print(actions[3])
+
+    # Display separator
+    print("===================================")
+
+    # Ask user whether they want to continue
+    choice = input(
+        "\nDo you want to continue monitoring? (yes/no): "
+    ).lower()
+
+    # Check whether user wants to stop
+    if choice == "no":
+
+        # Display successful completion message
+        print("\nSmart Home Agent executed successfully!")
+
+        # Display thank-you message
+        print("Thank you!")
+
+        # Exit the loop
+        break
